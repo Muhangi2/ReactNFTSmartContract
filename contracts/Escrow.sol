@@ -9,7 +9,7 @@ contract Escrow {
     address public lender;
     address payable public seller;
     address public inspector;
-    address nftAddress;
+    address public nftAddress;
 
     constructor(
         address _nftAddress,
@@ -17,10 +17,9 @@ contract Escrow {
         address _inspector,
         address _lender
     ) {
-        lender = _lender;
         nftAddress = _nftAddress;
         seller = _seller;
         inspector = _inspector;
+        lender = _lender;
     }
-    
 }
