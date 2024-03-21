@@ -12,7 +12,7 @@ describe("Escrow", () => {
   let result;
 
   beforeEach(async () => {
-    [seller, lender, inspector] = await ethers.getSigners();
+    [buyer, seller, lender, inspector] = await ethers.getSigners();
     const RealEstate = await ethers.getContractFactory("RealEstate");
     realEstate = await RealEstate.deploy();
 
@@ -35,7 +35,9 @@ describe("Escrow", () => {
     transaction = await realEstate.connect(seller).approve(escrow.address, 1);
     await transaction.wait();
 
-    transaction = await escrow.connect(seller).list(1);
+    transaction = await escrow
+      .connect(seller)
+      .list(1, buyer.address, tokens(10), tokens(5));
     await transaction.wait();
   });
   //deployment
@@ -65,6 +67,44 @@ describe("Escrow", () => {
   describe("listing", () => {
     it("update ownership", async () => {
       expect(await realEstate.ownerOf(1)).to.be.equal(escrow.address);
+    });
+    it("is the NFT listed", async () => {
+      const result = await escrow.islisted(1);
+      expect(result).to.be.equal(true);
+    });
+    it("returns the buyer", async () => {
+      const result = await escrow.buyer(1);
+      expect(result).to.be.equal(buyer.address);
+    });
+    it("returns a purchase price", async () => {
+      const result = await escrow.purchasePrice(1);
+      expect(result).to.be.equal(tokens(10));
+    });
+    it("returns escrowAmount", async () => {
+      const result = await escrow.escrowAmount(1);
+      expect(result).to.be.equal(tokens(5));
+    });
+  });
+  describe("contract balanace", () => {
+    it("update contract balance", async () => {
+      const transaction = await escrow
+        .connect(buyer)
+        .depositEther(1, { value: tokens(5) });
+      await transaction.wait();
+      //lets get the balance
+      const result = await escrow.getBalance();
+      expect(result).to.be.equal(tokens(5));
+    });
+  });
+  describe("inspection", () => {
+    it("update inpsection status", async () => {
+      const transaction = await escrow
+        .connect(inspector)
+        .updateInspectionStatus(1, true)});
+       await transaction.wait();
+      //lets get the balance
+      const result = await escrow.inspectionPassed1(1);
+      expect(result).to.be.equal(true);
     });
   });
 });
