@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-interface IERC721 {
+interface IERC720 {
     function transferFrom(address _from, address _to, uint256 _id) external;
 }
 
@@ -21,5 +21,9 @@ contract Escrow {
         seller = _seller;
         inspector = _inspector;
         lender = _lender;
+    }
+
+    function list(uint256 _nftID) public {
+        IERC720(nftAddress).transferFrom(msg.sender, address(this), _nftID);
     }
 }

@@ -16,12 +16,6 @@ describe("Escrow", () => {
     const RealEstate = await ethers.getContractFactory("RealEstate");
     realEstate = await RealEstate.deploy();
 
-    let transaction = await realEstate
-      .connect(seller)
-      .mint(
-        "https://ipfs.io/ipfs/QmQUozrHLAusXDxrvsESJ3PYB3rUeUuBAvVWw6nop2uu7c/1.png"
-      );
-    await transaction.wait();
     //ESCROWCONTRACT
     const Escrow = await ethers.getContractFactory("Escrow");
     escrow = await Escrow.deploy(
@@ -30,7 +24,21 @@ describe("Escrow", () => {
       inspector.address,
       lender.address
     );
+    //transctioninwallets
+    let transaction = await realEstate
+      .connect(seller)
+      .mint(
+        "https://ipfs.io/ipfs/QmQUozrHLAusXDxrvsESJ3PYB3rUeUuBAvVWw6nop2uu7c/1.png"
+      );
+    await transaction.wait();
+
+    transaction = await realEstate.connect(seller).approve(escrow.address, 1);
+    await transaction.wait();
+
+    transaction = await escrow.connect(seller).list(1);
+    await transaction.wait();
   });
+  //deployment
   describe("Deployment", () => {
     it("returns the NFT address", async () => {
       result = await escrow.nftAddress();
@@ -50,6 +58,13 @@ describe("Escrow", () => {
     it("returns the inspector address", async () => {
       result = await escrow.inspector();
       expect(result).to.be.equal(inspector.address);
+    });
+  });
+
+  //listing
+  describe("listing", () => {
+    it("update ownership", async () => {
+      expect(await realEstate.ownerOf(1)).to.be.equal(escrow.address);
     });
   });
 });
