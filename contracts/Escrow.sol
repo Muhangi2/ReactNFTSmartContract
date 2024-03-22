@@ -78,7 +78,7 @@ contract Escrow {
     function approvetheSale(uint256 _nftID) public {
         approval[_nftID][msg.sender] = true;
     }
-    function conductSales(uint256 _nftID) public view {
+    function conductSales(uint256 _nftID) public {
         require(inspectionPassed[_nftID]);
         require(approval[_nftID][buyer[_nftID]]);
         require(approval[_nftID][seller]);
@@ -87,7 +87,9 @@ contract Escrow {
 
         islisted[_nftID] = false;
 
-        bool success = payable(seller).call{value: address(this).balance}("");
+        (bool success, ) = payable(seller).call{value: address(this).balance}(
+            ""
+        );
         require(success);
         IERC720(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
     }

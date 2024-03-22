@@ -133,13 +133,13 @@ describe("Escrow", () => {
         .updateInspectionStatus(1, true);
       await transaction.wait();
 
-      transaction = await escrow.connect(buyer).approvaltheSale(1);
+      transaction = await escrow.connect(buyer).approvetheSale(1);
       await transaction.wait();
 
-      transaction = await escrow.connect(seller).approvaltheSale(1);
+      transaction = await escrow.connect(seller).approvetheSale(1);
       await transaction.wait();
 
-      transaction = await escrow.connect(lender).approvaltheSale(1);
+      transaction = await escrow.connect(lender).approvetheSale(1);
       await transaction.wait();
 
       await lender.sendTransaction({ to: escrow.address, value: tokens(5) });
@@ -148,7 +148,28 @@ describe("Escrow", () => {
       transaction = await escrow.connect(seller).conductSales(1);
       await transaction.wait();
     });
-    // it("it works",async()=>{})
+    it("if the buyer owns", async () => {
+      expect(await realEstate.ownerOf(1)).to.be.equal(buyer.address);
+    });
+    it("update the balance", async () => {
+      expect(await escrow.getBalance()).to.be.equal(0);
+    });
+    // it("should cancel the sale when inspection fails", async () => {
+    //   // Assign NFT ID
+    //   const nftID = 1;
+
+    //   // Perform cancellation by the buyer
+    //   let transaction = await escrow.connect(buyer).cancelSale(nftID);
+    //   await transaction.wait();
+
+    //   // Ensure the NFT is no longer listed for sale
+    //   const isListed = await escrow.islisted(nftID);
+    //   expect(isListed).to.be.false;
+
+    //   // Ensure ownership remains with the seller
+    //   const owner = await realEstate.ownerOf(nftID);
+    //   expect(owner).to.be.equal(seller.address);
+    // });
   });
 });
 
