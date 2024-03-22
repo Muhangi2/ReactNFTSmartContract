@@ -93,7 +93,6 @@ contract Escrow {
         require(success);
         IERC720(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
     }
-
     //cancelling the nftisale after saless
     function cancelSale(uint256 _nftID) public {
         if (inspectionPassed[_nftID] == false) {
