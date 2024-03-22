@@ -78,4 +78,26 @@ contract Escrow {
     function approvetheSale(uint256 _nftID) public {
         approval[_nftID][msg.sender] = true;
     }
+    function conductSales(uint256 _nftID) public view {
+        require(inspectionPassed[_nftID]);
+        require(approval[_nftID][buyer[_nftID]]);
+        require(approval[_nftID][seller]);
+        require(approval[_nftID][lender]);
+        require(address(this).balance >= purchasePrice[_nftID]);
+
+        islisted[_nftID] = false;
+
+        bool success = payable(seller).call{value: address(this).balance}("");
+        require(success);
+        IERC720(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
+    }
+
+    //cancelling the nftisale after saless
+    function cancelSale(uint256 _nftID) public {
+        if (inspectionPassed[_nftID] == false) {
+            payable(buyer[_nftID]).transfer(address(this).balance);
+        } else {
+            payable(seller).transfer(address(this).balance);
+        }
+    }
 }

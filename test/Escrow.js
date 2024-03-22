@@ -1,3 +1,4 @@
+const { wait } = require("@testing-library/user-event/dist/utils");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
@@ -109,7 +110,6 @@ describe("Escrow", () => {
   });
   describe("approval", () => {
     it("update approval status", async () => {
-
       let transaction = await escrow.connect(buyer).approvetheSale(1);
       await transaction.wait();
       transaction = await escrow.connect(seller).approvetheSale(1);
@@ -120,8 +120,35 @@ describe("Escrow", () => {
       expect(await escrow.approval(1, buyer.address)).to.be.equal(true);
       expect(await escrow.approval(1, seller.address)).to.be.equal(true);
       expect(await escrow.approval(1, lender.address)).to.be.equal(true);
-      
     });
+  });
+  describe("sales", async () => {
+    beforeEach(async () => {
+      let transaction = await escrow
+        .connect(buyer)
+        .depositEther(1, { value: tokens(5) });
+      await transaction.wait();
+      transaction = await escrow
+        .connect(inspector)
+        .updateInspectionStatus(1, true);
+      await transaction.wait();
+
+      transaction = await escrow.connect(buyer).approvaltheSale(1);
+      await transaction.wait();
+
+      transaction = await escrow.connect(seller).approvaltheSale(1);
+      await transaction.wait();
+
+      transaction = await escrow.connect(lender).approvaltheSale(1);
+      await transaction.wait();
+
+      await lender.sendTransaction({ to: escrow.address, value: tokens(5) });
+      await transaction.wait();
+
+      transaction = await escrow.connect(seller).conductSales(1);
+      await transaction.wait();
+    });
+    // it("it works",async()=>{})
   });
 });
 
