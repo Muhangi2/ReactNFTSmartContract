@@ -96,17 +96,18 @@ describe("Escrow", () => {
       expect(result).to.be.equal(tokens(5));
     });
   });
+
   describe("inspection", () => {
-    it("update inpsection status", async () => {
+    it("update inspection status", async () => {
       const transaction = await escrow
         .connect(inspector)
-        .updateInspectionStatus(1, true)});
-       await transaction.wait();
-      //lets get the balance
-      const result = await escrow.inspectionPassed1(1);
+        .updateInspectionStatus(1, true);
+      await transaction.wait();
+      const result = await escrow.inspectionPassed(1);
       expect(result).to.be.equal(true);
     });
   });
+  
 });
 
 //deployment tests
