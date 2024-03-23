@@ -14,6 +14,10 @@ import Escrow from './abis/Escrow.json'
 import config from './config.json';
 
 function App() {
+  const loadblockchainData=async()=>{
+    const provider=new ethers.providers.Web3Provider(window.ethereum);
+    const accounts =await window.ethereum.request({"method:'eth_request'"})
+  }
 
   return (
     <div>
