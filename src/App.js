@@ -1,33 +1,42 @@
-import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
 
 // Components
-import Navigation from './components/Navigation';
-import Search from './components/Search';
-import Home from './components/Home';
+import Navigation from "./components/Navigation";
+import Search from "./components/Search";
+import Home from "./components/Home";
 
 // ABIs
-import RealEstate from './abis/RealEstate.json'
-import Escrow from './abis/Escrow.json'
+import RealEstate from "./abis/RealEstate.json";
+import Escrow from "./abis/Escrow.json";
 
 // Config
-import config from './config.json';
+import config from "./config.json";
 
 function App() {
-  const loadblockchainData=async()=>{
-    const provider=new ethers.providers.Web3Provider(window.ethereum);
-    const accounts =await window.ethereum.request({"method:'eth_request'"})
-  }
+  //states
+  const [account, setAccount] = useState(null);
+
+  const loadblockchainData = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    console.log(accounts);
+    setAccount(accounts[0]);
+    console.log(account);
+  };
+
+  useEffect(() => {
+    loadblockchainData();
+  }, []);
 
   return (
     <div>
-
-      <div className='cards__section'>
-
+      <Navigation account={account} setAccount={setAccount} />
+      <div className="cards__section">
         <h3>Welcome to Millow</h3>
-
       </div>
-
     </div>
   );
 }
