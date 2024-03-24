@@ -17,21 +17,32 @@ function App() {
   //states
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
+  const [escrow, setEscrow] = useState(null);
+  const [realEstate, setRealEstate] = useState(null);
 
   const loadblockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(provider);
     const network = await provider.getNetwork();
 
-    const realEstate = new ethers.Contract(config[network.chainId].realEstate.address, RealEstate ,provider);
-    const totalSupply = await realEstate.totalSupply()
-    // console.log(totalSupply.toString())
-    const escrow = new ethers.Contract(config[network.chainId].realEstate.address, Escrow, provider);
+    const realEstate = new ethers.Contract(
+      config[network.chainId].realEstate.address,
+      RealEstate,
+      provider
+    );
     // const totalSupply=await realEstate.totalSupply();
+    console.log(realEstate);
+   
+    const escrow = new ethers.Contract(
+      config[network.chainId].realEstate.address,
+      Escrow,
+      provider
+    );
+    setEscrow(escrow);
+    // const totalSupply=await escrow.totalSupply();
 
     // config[network.chainId].realEstate.address;
     // config[network.chainId].escrow.address;
-  
 
     window.ethereum.on("accountsChanged", async () => {
       const accounts = await window.ethereum.request({
