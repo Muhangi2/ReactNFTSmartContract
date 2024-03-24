@@ -19,12 +19,13 @@ function App() {
 
   const loadblockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
+    window.ethereum.on("accountsChanged", async () => {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const account = ethers.utils.getAddress(accounts[0]);
+      setAccount(account);
     });
-    console.log(accounts);
-    setAccount(accounts[0]);
-    console.log(account);
   };
 
   useEffect(() => {
@@ -34,6 +35,7 @@ function App() {
   return (
     <div>
       <Navigation account={account} setAccount={setAccount} />
+      <Search />
       <div className="cards__section">
         <h3>Welcome to Millow</h3>
       </div>

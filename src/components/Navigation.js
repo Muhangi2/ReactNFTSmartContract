@@ -1,6 +1,14 @@
 import logo from "../assets/logo.svg";
 
 const Navigation = ({ account, setAccount }) => {
+  console.log(account);
+  const connectHandler = async () => {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    console.log(accounts[0]);
+  };
+
   return (
     <nav>
       <ul className="nav__links">
@@ -18,9 +26,16 @@ const Navigation = ({ account, setAccount }) => {
         <img src={logo} alt="logo" />
         <h1>Million</h1>
       </div>
-      <button type="button" className="nav__connect">
-        tap meeme
-      </button>
+
+      {account ? (
+        <button type="button" className="nav__connect">
+          {account.slice(0, 6) + "..." + account.slice(38, 42)}
+        </button>
+      ) : (
+        <button type="button" className="nav__connect" onClick={connectHandler}>
+          Connect
+        </button>
+      )}
     </nav>
   );
 };
