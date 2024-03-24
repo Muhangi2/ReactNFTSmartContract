@@ -16,9 +16,23 @@ import config from "./config.json";
 function App() {
   //states
   const [account, setAccount] = useState(null);
+  const [provider, setProvider] = useState(null);
 
   const loadblockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    setProvider(provider);
+    const network = await provider.getNetwork();
+
+    const realEstate = new ethers.Contract(config[network.chainId].realEstate.address, RealEstate ,provider);
+    const totalSupply = await realEstate.totalSupply()
+    // console.log(totalSupply.toString())
+    const escrow = new ethers.Contract(config[network.chainId].realEstate.address, Escrow, provider);
+    // const totalSupply=await realEstate.totalSupply();
+
+    // config[network.chainId].realEstate.address;
+    // config[network.chainId].escrow.address;
+  
+
     window.ethereum.on("accountsChanged", async () => {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -38,6 +52,24 @@ function App() {
       <Search />
       <div className="cards__section">
         <h3>Welcome to Millow</h3>
+        <h2>Places for you</h2>
+        <hr />
+        <div className="cards">
+          <div className="card">
+            <div className="card__image">
+              <img src="" alt="Home" />
+            </div>
+            <div className="card__info">
+              <h2>1 ETH</h2>
+              <p>
+                <strong>1</strong>bds
+                <strong>2</strong>bq
+                <strong>3</strong>br
+              </p>
+              <p>1234 Elm st</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
