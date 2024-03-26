@@ -14,8 +14,17 @@ describe("Escrow", () => {
 
   beforeEach(async () => {
     [buyer, seller, lender, inspector] = await ethers.getSigners();
+    //for realestate contract
     const RealEstate = await ethers.getContractFactory("RealEstate");
     realEstate = await RealEstate.deploy();
+    //for the escrow contract
+    const Escrow = await ethers.getContractFactory("Escrow");
+    escrow = await Escrow.deploy(
+      realEstate.address,
+      seller.address,
+      inspector.address,
+      lender.address
+    );
     let transaction = await realEstate
       .connect(seller)
       .mint(
@@ -26,17 +35,10 @@ describe("Escrow", () => {
     transaction = await realEstate.connect(seller).approve(escrow.address, 1);
     await transaction.wait();
 
-
     //ESCROWCONTRACT
-    const Escrow = await ethers.getContractFactory("Escrow");
-    escrow = await Escrow.deploy(
-      realEstate.address,
-      seller.address,
-      inspector.address,
-      lender.address
-    );
+
     //transctioninwallets
-    
+
     transaction = await escrow
       .connect(seller)
       .list(1, buyer.address, tokens(10), tokens(5));

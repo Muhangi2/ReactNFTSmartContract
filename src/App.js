@@ -39,10 +39,7 @@ function App() {
       provider
     );
     setEscrow(escrow);
-    // const totalSupply=await escrow.totalSupply();
-
-    // config[network.chainId].realEstate.address;
-    // config[network.chainId].escrow.address;
+  
 
     window.ethereum.on("accountsChanged", async () => {
       const accounts = await window.ethereum.request({
