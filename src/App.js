@@ -18,35 +18,42 @@ function App() {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
   const [escrow, setEscrow] = useState(null);
-  const [realEstate, setRealEstate] = useState(null);
+  const [homes, setHomes] = useState([]);
 
   const loadblockchainData = async () => {
- 
-  
-
+    //provider
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(provider);
     const network = await provider.getNetwork();
-   console.log(provider)
-
+    console.log(provider);
+    //realestates
     const realEstate = new ethers.Contract(
       config[network.chainId].realEstate.address,
       RealEstate,
       provider
     );
-    const totalSupply=await realEstate.totalSupply();
- 
+    const totalSupply = await realEstate.totalSupply();
     console.log(realEstate);
-   
+    console.log(totalSupply);
+
+    const homes = [];
+    for (var i = 0; i <= totalSupply; i++) {
+      const tokenUrl = await realEstate.TokenURI(i);
+      const response = await fetch(tokenUrl);
+      const metaData = await response.json();
+      homes.push(metaData);
+    }
+    setHomes(homes);
+    console.log(homes);
+    //escrowcontract
     const escrow = new ethers.Contract(
       config[network.chainId].realEstate.address,
       Escrow,
       provider
     );
+    setEscrow(escrow);
 
-      await escrow.totalSupply();(escrow);
-  
-
+    //on account change on the metamask
     window.ethereum.on("accountsChanged", async () => {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -55,7 +62,7 @@ function App() {
       setAccount(account);
     });
   };
-
+  //useeffect to keeep rnning the fuction on reload
   useEffect(() => {
     loadblockchainData();
   }, []);
