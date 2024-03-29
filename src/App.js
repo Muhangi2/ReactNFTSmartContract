@@ -24,16 +24,21 @@ function App() {
   const [toggle, setToggle] = useState(false);
 
   const loadBlockchainData = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    console.log(window?.ethereum);
+    const provider = new ethers.providers.Web3Provider(window?.ethereum);
+    console.log(provider);
     setProvider(provider);
     const network = await provider.getNetwork();
+    console.log("hello world");
+    // console.log(config[network.chainId].realEstate.address, "...");
 
     const realEstate = new ethers.Contract(
-      config[network.chainId].realEstate.address,
+      "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       RealEstate,
       provider
     );
     const totalSupply = await realEstate.totalSupply();
+    console.log(totalSupply);
     const homes = [];
 
     for (var i = 1; i <= totalSupply; i++) {
@@ -42,11 +47,11 @@ function App() {
       const metadata = await response.json();
       homes.push(metadata);
     }
-
+    console.log(homes, "homessss");
     setHomes(homes);
 
     const escrow = new ethers.Contract(
-      config[network.chainId].escrow.address,
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       Escrow,
       provider
     );
